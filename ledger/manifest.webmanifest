@@ -1,0 +1,16 @@
+{
+  "name": "Ledger — calorie ledger",
+  "short_name": "Ledger",
+  "description": "A calorie ledger that makes the daily number impossible to ignore.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#F6F7F9",
+  "theme_color": "#F6F7F9",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512-mask.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

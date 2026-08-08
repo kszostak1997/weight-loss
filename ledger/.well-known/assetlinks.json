@@ -1,0 +1,8 @@
+[{
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "dev.workers.kszostak1997.throbbing_surf_b5f0.twa",
+        "sha256_cert_fingerprints": ["66:C4:D0:6F:71:B8:B3:E6:4B:CE:E2:E2:86:B3:89:95:20:55:21:8C:6D:BB:75:16:9B:BF:0C:80:AA:37:EF:8B"]
+      }
+    }]
