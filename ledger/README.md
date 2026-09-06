@@ -26,14 +26,15 @@ Five tabs: **Today** (the gauge and today's log), **Activity** (the conditioning
 plan, steps, custom exercises), **Calendar**, **Progress**, **Favourites**.
 
 Progress is also where your body stats, weigh-ins, pace and protein target live —
-there's no separate settings screen. The **Body** card (age, height, sex,
-starting/target weight) is the one exception to "everything's always visible":
-before a profile exists it's shown as an open form; once saved it collapses to a
-summary with a **Change initial setup** button, so the numbers you basically never
-touch again don't sit at the top of your progress screen every time. Weigh-ins,
-Pace and Protein stay fully visible underneath, right after the projected-weight
-chart — those get touched often enough (or need to be visible while you're still
-filling in the Body form for the first time) that collapsing them wouldn't help.
+there's no separate settings screen. Weigh-ins, Pace and Protein sit right after
+the projected-weight chart, near the top, and take effect the moment you tap a
+different option — no save step, since there's nothing to validate together (unlike
+Body, see below). The **Body** card (age, height, sex, starting/target weight)
+lives at the very bottom instead, since those are numbers you set once and rarely
+touch again: before a profile exists it's shown as an open form; once saved it
+collapses to a summary with a **Change initial setup** button that reopens the
+same form, still explicitly saved (age/height/sex/weight all get validated
+together before anything downstream recalculates).
 
 Favourites holds exactly what its name says — reusable meals and reusable
 exercises — plus **Data** (export/restore/erase) at the bottom, since it has to

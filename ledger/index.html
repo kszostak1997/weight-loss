@@ -409,34 +409,7 @@ button{background:none;border:0;padding:0;cursor:pointer}
   <section class="screen" id="s-prog">
     <div class="top"><div><h1>Progress</h1><div class="sub" id="p-sub">—</div></div></div>
 
-    <div class="card" style="margin-top:0">
-      <h3>Body</h3>
-      <div id="body-summary">
-        <div class="kv"><span class="k">Age</span><span class="v" id="bs-age">—</span></div>
-        <div class="kv"><span class="k">Height</span><span class="v" id="bs-h">—</span></div>
-        <div class="kv"><span class="k">Sex</span><span class="v" id="bs-sex">—</span></div>
-        <div class="kv"><span class="k">Starting weight</span><span class="v" id="bs-w">—</span></div>
-        <div class="kv"><span class="k">Target weight</span><span class="v" id="bs-tw">—</span></div>
-        <button class="btn ghost sm" id="b-editbody" style="margin-top:12px">Change initial setup</button>
-      </div>
-      <div id="body-form" style="display:none">
-        <div class="row2">
-          <div class="field"><label class="lbl">Age</label><input id="f-age" type="number" inputmode="numeric" min="14" max="99"></div>
-          <div class="field"><label class="lbl">Height cm</label><input id="f-h" type="number" inputmode="numeric" min="120" max="230"></div>
-        </div>
-        <div class="field"><label class="lbl">Sex (for the formula)</label>
-          <div class="seg" id="f-sex"><button data-v="m">Male</button><button data-v="f">Female</button></div>
-        </div>
-        <div class="row2">
-          <div class="field"><label class="lbl">Starting kg</label><input id="f-w" type="number" inputmode="decimal" step="0.1"></div>
-          <div class="field"><label class="lbl">Target kg</label><input id="f-tw" type="number" inputmode="decimal" step="0.1"></div>
-        </div>
-        <div class="note">Weight is projected from what you log, day by day. Changing the starting weight restarts the projection from today's number.</div>
-        <button class="btn" id="b-save" style="margin-top:14px">Save profile</button>
-      </div>
-    </div>
-
-    <div class="card" style="padding:20px 16px">
+    <div class="card" style="margin-top:0;padding:20px 16px">
       <div class="bighero">
         <div class="lbl">Still to go</div>
         <div class="hv num" id="p-togo" style="margin-top:6px">0.0<em> kg</em></div>
@@ -493,6 +466,33 @@ button{background:none;border:0;padding:0;cursor:pointer}
       <div class="kv"><span class="k">BMI</span><span class="v" id="p-bmi">—</span></div>
       <div class="kv"><span class="k">Est. arrival</span><span class="v" id="p-eta">—</span></div>
       <div id="p-warn"></div>
+    </div>
+
+    <div class="card">
+      <h3>Body</h3>
+      <div id="body-summary">
+        <div class="kv"><span class="k">Age</span><span class="v" id="bs-age">—</span></div>
+        <div class="kv"><span class="k">Height</span><span class="v" id="bs-h">—</span></div>
+        <div class="kv"><span class="k">Sex</span><span class="v" id="bs-sex">—</span></div>
+        <div class="kv"><span class="k">Starting weight</span><span class="v" id="bs-w">—</span></div>
+        <div class="kv"><span class="k">Target weight</span><span class="v" id="bs-tw">—</span></div>
+        <button class="btn ghost sm" id="b-editbody" style="margin-top:12px">Change initial setup</button>
+      </div>
+      <div id="body-form" style="display:none">
+        <div class="row2">
+          <div class="field"><label class="lbl">Age</label><input id="f-age" type="number" inputmode="numeric" min="14" max="99"></div>
+          <div class="field"><label class="lbl">Height cm</label><input id="f-h" type="number" inputmode="numeric" min="120" max="230"></div>
+        </div>
+        <div class="field"><label class="lbl">Sex (for the formula)</label>
+          <div class="seg" id="f-sex"><button data-v="m">Male</button><button data-v="f">Female</button></div>
+        </div>
+        <div class="row2">
+          <div class="field"><label class="lbl">Starting kg</label><input id="f-w" type="number" inputmode="decimal" step="0.1"></div>
+          <div class="field"><label class="lbl">Target kg</label><input id="f-tw" type="number" inputmode="decimal" step="0.1"></div>
+        </div>
+        <div class="note">Weight is projected from what you log, day by day. Changing the starting weight restarts the projection from today's number.</div>
+        <button class="btn" id="b-save" style="margin-top:14px">Save profile</button>
+      </div>
     </div>
   </section>
 
@@ -1483,7 +1483,11 @@ function renderPace(){
     b.dataset.v = String(v);
     b.innerHTML = label + (v ? '<span class="sm2">' + Math.abs(v) + ' kg a week · ' + (v < 0 ? '−' : '+') + kcal + ' kcal a day</span>' : '');
     if(v === draft.pace) b.classList.add('on');
-    b.onclick = () => { draft.pace = v; renderPace(); };
+    b.onclick = () => {
+      draft.pace = v;
+      if(db.profile){ db.profile.pace = v; save(); refreshAfterActivityChange(); }
+      else renderPace();
+    };
     box.appendChild(b);
   });
 
@@ -1680,7 +1684,12 @@ document.addEventListener('click', e => {
   const sx = e.target.closest('#f-sex button');
   if(sx){ draft.sex = sx.dataset.v; segSet('f-sex', draft.sex); renderPace(); return; }
   const pr = e.target.closest('#f-protein button');
-  if(pr){ draft.protein = +pr.dataset.v; segSet('f-protein', pr.dataset.v); renderProteinNote(); return; }
+  if(pr){
+    draft.protein = +pr.dataset.v;
+    if(db.profile){ db.profile.proteinPerKg = draft.protein; save(); refreshAfterActivityChange(); }
+    else { segSet('f-protein', pr.dataset.v); renderProteinNote(); }
+    return;
+  }
   const catseg = e.target.closest('#n-cat button, #fv-cat button');
   if(catseg){ catseg.classList.toggle('on'); return; }
   const chip = e.target.closest('.catchips button');
