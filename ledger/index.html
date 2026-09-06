@@ -176,10 +176,19 @@ button{background:none;border:0;padding:0;cursor:pointer}
 .dsbtn:disabled{opacity:.35}
 .actrow{width:100%;border-bottom:1px solid var(--line)}
 .actrow:last-child{border-bottom:0}
+.actcb{display:flex;align-items:center;gap:11px;flex:1;min-width:0}
 .actname{flex:1;min-width:0;font-size:15px;font-weight:500}
 .actdetail{display:block;font-size:12px;font-weight:400;color:var(--ink-3);margin-top:1px}
 .actkcal{font-size:13px;font-weight:600;color:var(--ink-3);white-space:nowrap}
 .actkcal em{font-style:normal;font-weight:400;margin-left:2px}
+.actvideo{flex:0 0 auto;width:26px;height:26px;border-radius:999px;background:var(--neutral);color:var(--ink-2);
+  display:flex;align-items:center;justify-content:center}
+.actvideo svg{width:11px;height:11px;display:block;margin-left:1px}
+
+.catchips{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;margin-bottom:12px}
+.catchips button{flex:0 0 auto;padding:8px 14px;border-radius:999px;background:var(--track);
+  color:var(--ink-2);font-size:13px;font-weight:600;white-space:nowrap}
+.catchips button.on{background:var(--ink);color:#fff}
 
 .favlist{max-height:48vh;overflow-y:auto}
 .fav{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line);width:100%;text-align:left}
@@ -332,6 +341,12 @@ button{background:none;border:0;padding:0;cursor:pointer}
     </div>
 
     <div class="card">
+      <h3>Custom exercises</h3>
+      <div id="a-custom"></div>
+      <button class="btn ghost sm" id="b-addex" style="margin-top:12px">+ Add exercise</button>
+    </div>
+
+    <div class="card">
       <h3>Steps</h3>
       <label class="check"><input type="checkbox" id="a-stepcheck"> Hit the goal — <span id="a-stepgoallabel">8,000</span> steps</label>
       <div class="row2" style="margin-top:10px">
@@ -456,18 +471,6 @@ button{background:none;border:0;padding:0;cursor:pointer}
     </div>
 
     <div class="card">
-      <h3>Activity</h3>
-      <div class="seg col" id="f-act">
-        <button data-v="1.2">Sedentary<span class="sm2">Desk job, no training</span></button>
-        <button data-v="1.375">Light<span class="sm2">1 to 3 sessions a week</span></button>
-        <button data-v="1.55">Moderate<span class="sm2">3 to 5 sessions a week</span></button>
-        <button data-v="1.725">Hard<span class="sm2">6 to 7 sessions a week</span></button>
-        <button data-v="1.9">Very hard<span class="sm2">Physical job or two a day</span></button>
-      </div>
-      <div class="note">This is your baseline outside of logged workouts. Exercises and steps checked off in the Activity tab add extra calories on top of this, on the days you actually do them.</div>
-    </div>
-
-    <div class="card">
       <h3>Pace</h3>
       <div class="seg col" id="f-pace"></div>
       <div class="note" id="f-pacenote"></div>
@@ -490,8 +493,21 @@ button{background:none;border:0;padding:0;cursor:pointer}
 
     <div class="card">
       <h3>Favourites</h3>
+      <div class="catchips" id="mefav-cats">
+        <button class="on" data-v="">All</button>
+        <button data-v="breakfast">Breakfast</button>
+        <button data-v="main">Main</button>
+        <button data-v="snacks">Snacks</button>
+        <button data-v="drinks">Drinks</button>
+      </div>
       <div class="favlist" id="me-favs" style="max-height:none"></div>
       <button class="btn ghost sm" id="b-newfav" style="margin-top:12px">+ New favourite</button>
+    </div>
+
+    <div class="card">
+      <h3>Favourite exercises</h3>
+      <div class="favlist" id="exme-favs" style="max-height:none"></div>
+      <button class="btn ghost sm" id="b-newexfav" style="margin-top:12px">+ New favourite exercise</button>
     </div>
 
     <div class="card">
@@ -521,17 +537,32 @@ button{background:none;border:0;padding:0;cursor:pointer}
     <div class="grab"></div>
     <h2 id="add-ttl" style="display:none;color:var(--warn)"></h2>
     <div class="tabs"><button class="on" data-tab="fav">Favourites</button><button data-tab="new">New entry</button></div>
-    <div id="tab-fav">
+    <div id="tab-fav" data-tabpanel="fav">
       <div class="field"><input id="fav-search" placeholder="Search" autocomplete="off"></div>
+      <div class="catchips" id="addfav-cats">
+        <button class="on" data-v="">All</button>
+        <button data-v="breakfast">Breakfast</button>
+        <button data-v="main">Main</button>
+        <button data-v="snacks">Snacks</button>
+        <button data-v="drinks">Drinks</button>
+      </div>
       <div class="favlist" id="add-favs"></div>
     </div>
-    <div id="tab-new" style="display:none">
+    <div id="tab-new" data-tabpanel="new" style="display:none">
       <div class="field"><label class="lbl">What did you eat</label><input id="n-name" placeholder="Chicken and rice" autocomplete="off"></div>
       <div class="row2">
         <div class="field"><label class="lbl">Kcal</label><input id="n-kcal" type="number" inputmode="numeric"></div>
         <div class="field"><label class="lbl">Protein g</label><input id="n-protein" type="number" inputmode="numeric" placeholder="optional"></div>
       </div>
       <div class="field"><label class="lbl">Portion ×</label><input id="n-mult" type="number" inputmode="decimal" step="0.25" value="1"></div>
+      <div class="field"><label class="lbl">Category</label>
+        <div class="seg" id="n-cat">
+          <button data-v="breakfast">Breakfast</button>
+          <button data-v="main">Main</button>
+          <button data-v="snacks">Snacks</button>
+          <button data-v="drinks">Drinks</button>
+        </div>
+      </div>
       <label class="check"><input type="checkbox" id="n-fav" checked> Save to favourites</label>
       <button class="btn" id="n-save">Add to today</button>
     </div>
@@ -562,9 +593,49 @@ button{background:none;border:0;padding:0;cursor:pointer}
       <div class="field"><label class="lbl">Protein g</label><input id="fv-protein" type="number" inputmode="numeric" placeholder="optional"></div>
     </div>
     <div class="field"><label class="lbl">Portion note</label><input id="fv-note" placeholder="100 g / 1 bowl"></div>
+    <div class="field"><label class="lbl">Category</label>
+      <div class="seg" id="fv-cat">
+        <button data-v="breakfast">Breakfast</button>
+        <button data-v="main">Main</button>
+        <button data-v="snacks">Snacks</button>
+        <button data-v="drinks">Drinks</button>
+      </div>
+    </div>
     <button class="btn" id="fv-save">Save favourite</button>
     <div style="height:8px"></div>
     <button class="btn sm danger" id="fv-del" style="display:none">Delete favourite</button>
+  </div>
+</div>
+
+<div class="sheet" id="sheet-addex">
+  <div class="veil" data-close></div>
+  <div class="panel">
+    <div class="grab"></div>
+    <h2 id="addex-ttl" style="display:none;color:var(--warn)"></h2>
+    <div class="tabs"><button class="on" data-tab="exfav">Favourites</button><button data-tab="exnew">New</button></div>
+    <div id="tab-exfav" data-tabpanel="exfav">
+      <div class="field"><input id="exfav-search" placeholder="Search" autocomplete="off"></div>
+      <div class="favlist" id="addex-favs"></div>
+    </div>
+    <div id="tab-exnew" data-tabpanel="exnew" style="display:none">
+      <div class="field"><label class="lbl">What did you do</label><input id="ex-name" placeholder="Evening walk" autocomplete="off"></div>
+      <div class="field"><label class="lbl">Kcal</label><input id="ex-kcal" type="number" inputmode="numeric"></div>
+      <label class="check"><input type="checkbox" id="ex-fav" checked> Save to favourite exercises</label>
+      <button class="btn" id="ex-save">Add to this day</button>
+    </div>
+  </div>
+</div>
+
+<div class="sheet" id="sheet-exfav">
+  <div class="veil" data-close></div>
+  <div class="panel">
+    <div class="grab"></div>
+    <h2 id="exfv-ttl">New favourite exercise</h2>
+    <div class="field"><label class="lbl">Name</label><input id="exfv-name" autocomplete="off"></div>
+    <div class="field"><label class="lbl">Kcal</label><input id="exfv-kcal" type="number" inputmode="numeric"></div>
+    <button class="btn" id="exfv-save">Save favourite exercise</button>
+    <div style="height:8px"></div>
+    <button class="btn sm danger" id="exfv-del" style="display:none">Delete favourite exercise</button>
   </div>
 </div>
 
@@ -605,9 +676,10 @@ const store = {
   }
 };
 
-let db = { profile:null, favs:[], entries:{}, seen:{}, weighIns:{}, activity:{}, settings:{ stepGoal:8000 } };
+let db = { profile:null, favs:[], entries:{}, seen:{}, weighIns:{}, activity:{}, customEx:{}, exFavs:[], settings:{ stepGoal:8000 } };
 let calMonth = new Date();
 let calSel = null, pending = null, editingFav = null, activeDate = null;
+let addFavCat = '', meFavCat = '', activeExDate = null, editingExFav = null;
 
 const $ = id => document.getElementById(id);
 const iso = d => { const x = new Date(d); x.setMinutes(x.getMinutes() - x.getTimezoneOffset()); return x.toISOString().slice(0,10); };
@@ -624,6 +696,7 @@ const esc = s => String(s).replace(/[&<>"]/g, ch => ({'&':'&amp;','<':'&lt;','>'
 const ICON_X    = '<svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M2 2l8 8M10 2l-8 8"/></svg>';
 const ICON_PLUS = '<svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 1.5v9M1.5 6h9"/></svg>';
 const ICON_PEN  = '<svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="M8.2 1.3 10.7 3.8 4 10.5 1 11l.5-3z"/></svg>';
+const ICON_PLAY = '<svg viewBox="0 0 12 12" fill="currentColor"><path d="M3 1.6v8.8l7.2-4.4z"/></svg>';
 const MON = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 const DAY = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 const WD  = ['sun','mon','tue','wed','thu','fri','sat'];
@@ -644,9 +717,19 @@ const weekdayKey = d => WD[parseISO(d).getDay()];
      kcal   – rough calories an average REF_KG adult burns
               doing this once. Scaled automatically by the
               user's current weight when it is checked off.
+     video  – optional. A YouTube (or any) URL showing the
+              movement. When present, a small ▶ link appears
+              next to the exercise. Omit it entirely for items
+              with no link yet — nothing else needs to change.
    ========================================================= */
 const REF_KG = 75;                 // reference bodyweight the kcal figures below assume
 const STEP_KCAL_PER_STEP = 0.00045; // ≈ 45 kcal per 10,000 steps at REF_KG
+
+/* Maintenance always assumes a sedentary lifestyle (desk job, no incidental
+   training) — the Activity tab is the only thing that adds calories on top
+   of this, so the number stays honest instead of double-counting a vague
+   self-reported "how active are you" guess. */
+const BASE_ACTIVITY = 1.2;
 
 const PLAN = {
   mon: { title:'Match day', items:[
@@ -732,7 +815,7 @@ function stamp(word, sub, st){
 function tdeeFor(w){
   const p = db.profile;
   const bmr = 10*w + 6.25*p.h - 5*p.age + (p.sex === 'm' ? 5 : -161);
-  return Math.round(bmr * p.act);
+  return Math.round(bmr * BASE_ACTIVITY);
 }
 function dayKcal(d){ return (db.entries[d]||[]).reduce((a,m) => a + m.kcal, 0); }
 function dayProtein(d){ return (db.entries[d]||[]).reduce((a,m) => a + (m.protein||0), 0); }
@@ -740,14 +823,18 @@ function loggedDates(){ return Object.keys(db.entries).filter(d => (db.entries[d
 
 /* calories earned back from whatever was checked off in the Activity tab
    for that specific date — exercises from PLAN plus logged steps, scaled
-   from the REF_KG estimates to the weight passed in */
+   from the REF_KG estimates to the weight passed in, plus any custom
+   exercises logged that day (those carry their own kcal, given directly
+   by the user like a meal, so they are not rescaled by weight) */
 function activityKcalFor(d, w){
   const rec = db.activity[d], plan = PLAN[weekdayKey(d)];
-  if(!rec || !plan) return 0;
   const scale = (w || REF_KG) / REF_KG;
   let kcal = 0;
-  if(rec.ex) plan.items.forEach(it => { if(rec.ex[it.id]) kcal += it.kcal * scale; });
-  if(rec.steps > 0) kcal += rec.steps * STEP_KCAL_PER_STEP * scale;
+  if(rec && plan){
+    if(rec.ex) plan.items.forEach(it => { if(rec.ex[it.id]) kcal += it.kcal * scale; });
+    if(rec.steps > 0) kcal += rec.steps * STEP_KCAL_PER_STEP * scale;
+  }
+  (db.customEx[d] || []).forEach(e => kcal += e.kcal);
   return kcal;
 }
 
@@ -1173,9 +1260,11 @@ let actDate = null;
 
 function hasActivity(d){
   const rec = db.activity[d];
-  if(!rec) return false;
-  if(rec.steps > 0) return true;
-  return !!(rec.ex && Object.values(rec.ex).some(Boolean));
+  if(rec){
+    if(rec.steps > 0) return true;
+    if(rec.ex && Object.values(rec.ex).some(Boolean)) return true;
+  }
+  return !!(db.customEx[d] && db.customEx[d].length);
 }
 
 function drawDayStrip(){
@@ -1202,14 +1291,30 @@ function drawActItems(c, d){
   plan.items.forEach(it => {
     const on = !!ex[it.id], k = Math.round(it.kcal * (w / REF_KG));
     if(on) kcal += k;
-    const row = document.createElement('label');
+    const row = document.createElement('div');
     row.className = 'check actrow';
-    row.innerHTML = '<input type="checkbox" data-ex="' + it.id + '"' + (on ? ' checked' : '') + '>' +
-      '<span class="actname">' + esc(it.label) + '<span class="actdetail">' + esc(it.detail) + '</span></span>' +
+    row.innerHTML =
+      '<label class="actcb"><input type="checkbox" data-ex="' + it.id + '"' + (on ? ' checked' : '') + '>' +
+      '<span class="actname">' + esc(it.label) + '<span class="actdetail">' + esc(it.detail) + '</span></span></label>' +
+      (it.video ? '<a class="actvideo" href="' + esc(it.video) + '" target="_blank" rel="noopener" aria-label="Watch ' + esc(it.label) + '">' + ICON_PLAY + '</a>' : '') +
       '<span class="actkcal">' + k + '<em>kcal</em></span>';
     box.appendChild(row);
   });
   setV('a-kcal', fmt(kcal), 'kcal');
+}
+
+function drawCustomEx(d){
+  const list = db.customEx[d] || [], box = $('a-custom');
+  if(!list.length){
+    box.innerHTML = '<div class="empty">Nothing extra logged this day.</div>';
+    return;
+  }
+  box.innerHTML = list.map(e =>
+    '<div class="meal"><span class="dot" style="background:var(--ink-3)"></span>' +
+    '<div class="mname">' + esc(e.name) + '</div>' +
+    '<div class="mkcal">' + fmt(e.kcal) + '</div>' +
+    '<button class="del" data-delex="' + e.id + '" data-exdate="' + d + '" aria-label="Remove">' + ICON_X + '</button></div>'
+  ).join('');
 }
 
 function drawSteps(c, d){
@@ -1228,8 +1333,7 @@ function drawActWeek(c){
   const wk = weekDates(), w = c ? c.w : (db.profile ? db.profile.w : REF_KG);
   let sessions = 0, kcal = 0;
   wk.forEach(d => {
-    const rec = db.activity[d];
-    if(rec && rec.ex && Object.values(rec.ex).some(Boolean)) sessions++;
+    if(hasActivity(d)) sessions++;
     kcal += activityKcalFor(d, w);
   });
   setV('a-weeksessions', sessions, 'of 7 days');
@@ -1242,6 +1346,7 @@ function renderActivity(){
     ' · ' + PLAN[weekdayKey(d)].title;
   drawDayStrip();
   drawActItems(c, d);
+  drawCustomEx(d);
   drawSteps(c, d);
   drawActWeek(c);
 }
@@ -1280,19 +1385,21 @@ function renderWeighList(){
 }
 
 /* ================== SETUP ================== */
-let draft = { sex:'m', act:1.375, pace:-0.5, protein:1.8 };
+let draft = { sex:'m', pace:-0.5, protein:1.8 };
 
 function renderMe(){
   const p = db.profile;
   if(p && !renderMe._loaded){
-    draft = { sex:p.sex, act:p.act, pace:p.pace, protein:p.proteinPerKg || 1.8 };
+    draft = { sex:p.sex, pace:p.pace, protein:p.proteinPerKg || 1.8 };
     $('f-age').value = p.age; $('f-h').value = p.h; $('f-w').value = p.w; $('f-tw').value = p.tw;
     renderMe._loaded = true;
   }
-  segSet('f-sex', draft.sex); segSet('f-act', String(draft.act)); segSet('f-protein', String(draft.protein));
+  segSet('f-sex', draft.sex); segSet('f-protein', String(draft.protein));
+  segSet('mefav-cats', meFavCat);
   renderPace();
   renderProteinNote();
-  renderFavList($('me-favs'), true);
+  renderFavList($('me-favs'), true, '', meFavCat);
+  renderExFavList($('exme-favs'), true);
   renderWeighList();
 }
 
@@ -1325,11 +1432,11 @@ function renderPace(){
   const age = +$('f-age').value, h = +$('f-h').value;
   if(age && h && w){
     const bmr = 10*w + 6.25*h - 5*age + (draft.sex === 'm' ? 5 : -161);
-    const tdee = Math.round(bmr * draft.act);
+    const tdee = Math.round(bmr * BASE_ACTIVITY);
     let budget = Math.round(tdee + draft.pace * KCAL_PER_KG / 7);
     const fl = floorFor(draft.sex), clamped = budget < fl;
     if(clamped) budget = fl;
-    $('f-pacenote').innerHTML = 'Maintenance <b>' + fmt(tdee) + ' kcal</b>. Daily budget <b>' + fmt(budget) + ' kcal</b>.';
+    $('f-pacenote').innerHTML = 'Maintenance <b>' + fmt(tdee) + ' kcal</b>. Daily budget <b>' + fmt(budget) + ' kcal</b>. Assumes a sedentary baseline — the Activity tab is what adds real calories on top.';
     let warn = '';
     if(clamped) warn += '<div class="warnbox">That pace drops the budget below <b>' + fl + ' kcal</b>, so it is held there. Slower loss keeps more muscle and is much easier to stick to.</div>';
     if(down && Math.abs(draft.pace) > 0.0075 * w) warn += '<div class="warnbox">Losing more than about 1% of body weight a week is hard to sustain and usually costs muscle.</div>';
@@ -1339,13 +1446,13 @@ function renderPace(){
 
 function segSet(id, val){ [...$(id).children].forEach(b => b.classList.toggle('on', b.dataset.v === val)); }
 
-function renderFavList(box, editable, filter){
+function renderFavList(box, editable, filter, cat){
   const q = (filter||'').toLowerCase();
-  const list = db.favs.filter(f => !q || f.name.toLowerCase().includes(q))
+  const list = db.favs.filter(f => (!q || f.name.toLowerCase().includes(q)) && (!cat || f.category === cat))
                       .sort((a,b) => (b.uses||0) - (a.uses||0) || a.name.localeCompare(b.name));
   if(!list.length){
-    box.innerHTML = '<div class="empty"><b>' + (q ? 'No match' : 'No favourites yet') + '</b>' +
-      (q ? 'Add it on the New entry tab.' : 'Anything you add as a new entry can be kept here for one tap reuse.') + '</div>';
+    box.innerHTML = '<div class="empty"><b>' + (q || cat ? 'No match' : 'No favourites yet') + '</b>' +
+      (q || cat ? 'Add it on the New entry tab.' : 'Anything you add as a new entry can be kept here for one tap reuse.') + '</div>';
     return;
   }
   box.innerHTML = list.map(f => {
@@ -1355,6 +1462,22 @@ function renderFavList(box, editable, filter){
       '<div class="fkcal">' + fmt(f.kcal) + '</div>' +
       '<div class="plus">' + (editable ? ICON_PEN : ICON_PLUS) + '</div></button>';
   }).join('');
+}
+
+function renderExFavList(box, editable, filter){
+  const q = (filter||'').toLowerCase();
+  const list = db.exFavs.filter(f => !q || f.name.toLowerCase().includes(q))
+                        .sort((a,b) => (b.uses||0) - (a.uses||0) || a.name.localeCompare(b.name));
+  if(!list.length){
+    box.innerHTML = '<div class="empty"><b>' + (q ? 'No match' : 'No favourite exercises yet') + '</b>' +
+      (q ? 'Add it on the New tab.' : 'Anything you log as a new exercise can be kept here for one tap reuse.') + '</div>';
+    return;
+  }
+  box.innerHTML = list.map(f =>
+    '<button class="fav" data-exfav="' + f.id + '">' +
+      '<div class="fname">' + esc(f.name) + '</div>' +
+      '<div class="fkcal">' + fmt(f.kcal) + '</div>' +
+      '<div class="plus">' + (editable ? ICON_PEN : ICON_PLUS) + '</div></button>').join('');
 }
 
 /* ================== ACTIONS ================== */
@@ -1376,6 +1499,17 @@ function addMeal(name, kcal, date, protein){
   }
   renderToday();
   if($('s-cal').classList.contains('on')) renderCal();
+}
+
+/* a custom exercise carries its own kcal figure, given directly like a
+   meal, so — unlike a PLAN item — it is not rescaled by bodyweight */
+function addCustomEx(name, kcal, date){
+  const d = date || today();
+  if(!db.customEx[d]) db.customEx[d] = [];
+  db.customEx[d].push({ id:uid(), name, kcal:Math.round(kcal) });
+  save(); buzz(14);
+  toast(name + ' added');
+  refreshAfterActivityChange();
 }
 
 function openPortion(fav){
@@ -1472,17 +1606,34 @@ document.addEventListener('click', e => {
     if(fav.closest('#me-favs')) return openFavEditor(f);
     openPortion(f); return;
   }
+  const exfav = e.target.closest('[data-exfav]');
+  if(exfav){
+    const f = db.exFavs.find(x => x.id === exfav.dataset.exfav); if(!f) return;
+    if(exfav.closest('#exme-favs')) return openExFavEditor(f);
+    f.uses = (f.uses||0) + 1; save();
+    closeSheets(); addCustomEx(f.name, f.kcal, activeExDate);
+    return;
+  }
   const sx = e.target.closest('#f-sex button');
   if(sx){ draft.sex = sx.dataset.v; segSet('f-sex', draft.sex); renderPace(); return; }
-  const ac = e.target.closest('#f-act button');
-  if(ac){ draft.act = +ac.dataset.v; segSet('f-act', ac.dataset.v); renderPace(); return; }
   const pr = e.target.closest('#f-protein button');
   if(pr){ draft.protein = +pr.dataset.v; segSet('f-protein', pr.dataset.v); renderProteinNote(); return; }
+  const catseg = e.target.closest('#n-cat button, #fv-cat button');
+  if(catseg){ segSet(catseg.parentNode.id, catseg.dataset.v); return; }
+  const chip = e.target.closest('.catchips button');
+  if(chip){
+    const chips = chip.parentNode;
+    [...chips.children].forEach(b => b.classList.toggle('on', b === chip));
+    if(chips.id === 'addfav-cats'){ addFavCat = chip.dataset.v; renderFavList($('add-favs'), false, $('fav-search').value, addFavCat); }
+    else if(chips.id === 'mefav-cats'){ meFavCat = chip.dataset.v; renderFavList($('me-favs'), true, '', meFavCat); }
+    return;
+  }
   const tab = e.target.closest('.tabs button');
   if(tab){
+    const group = tab.closest('.sheet') || document;
     [...tab.parentNode.children].forEach(b => b.classList.toggle('on', b === tab));
-    $('tab-fav').style.display = tab.dataset.tab === 'fav' ? '' : 'none';
-    $('tab-new').style.display = tab.dataset.tab === 'new' ? '' : 'none';
+    [...group.querySelectorAll('[data-tabpanel]')].forEach(p => p.style.display = p.dataset.tabpanel === tab.dataset.tab ? '' : 'none');
+    return;
   }
   const ds = e.target.closest('.dsbtn[data-d]');
   if(ds && !ds.disabled){ actDate = ds.dataset.d; renderActivity(); return; }
@@ -1491,6 +1642,13 @@ document.addEventListener('click', e => {
     if(db.weighIns) delete db.weighIns[delwi.dataset.delwi];
     save(); renderWeighList(); refreshAfterActivityChange();
     toast('Weigh-in removed'); return;
+  }
+  const delex = e.target.closest('[data-delex]');
+  if(delex){
+    const dd = delex.dataset.exdate;
+    db.customEx[dd] = (db.customEx[dd]||[]).filter(x => x.id !== delex.dataset.delex);
+    save(); refreshAfterActivityChange();
+    toast('Exercise removed'); return;
   }
 });
 
@@ -1508,8 +1666,10 @@ document.addEventListener('change', e => {
 function openAdd(date){
   if(!db.profile) return toast('Add your profile in Setup first');
   activeDate = date || today();
-  $('fav-search').value = ''; renderFavList($('add-favs'), false);
-  $('n-name').value = ''; $('n-kcal').value = ''; $('n-mult').value = 1;
+  addFavCat = ''; segSet('addfav-cats', '');
+  $('fav-search').value = ''; renderFavList($('add-favs'), false, '', addFavCat);
+  $('n-name').value = ''; $('n-kcal').value = ''; $('n-protein').value = ''; $('n-mult').value = 1;
+  segSet('n-cat', 'main');
   const same = activeDate === today();
   $('add-ttl').textContent = same ? '' : 'Adding to ' + parseISO(activeDate).getDate() + ' ' + MON[parseISO(activeDate).getMonth()].slice(0,3);
   $('add-ttl').style.display = same ? 'none' : '';
@@ -1517,14 +1677,15 @@ function openAdd(date){
 }
 $('b-add').onclick = () => openAdd(today());
 $('b-addday').onclick = () => openAdd(calSel);
-$('fav-search').oninput = e => renderFavList($('add-favs'), false, e.target.value);
+$('fav-search').oninput = e => renderFavList($('add-favs'), false, e.target.value, addFavCat);
 
 $('n-save').onclick = () => {
   const name = $('n-name').value.trim(), kcal = parseFloat($('n-kcal').value), mult = parseFloat($('n-mult').value) || 1;
   const protein = parseFloat($('n-protein').value) || 0;
+  const category = ($('n-cat').querySelector('button.on') || {}).dataset.v || 'main';
   if(!name || !(kcal > 0)) return toast('Needs a name and a kcal number');
   if($('n-fav').checked && !db.favs.some(f => f.name.toLowerCase() === name.toLowerCase()))
-    db.favs.push({ id:uid(), name, kcal:Math.round(kcal), protein:Math.round(protein), note:'', uses:1 });
+    db.favs.push({ id:uid(), name, kcal:Math.round(kcal), protein:Math.round(protein), note:'', category, uses:1 });
   closeSheets(); addMeal(name, kcal * mult, activeDate, protein * mult);
 };
 $('pt-mult').oninput = () => { segSet('pt-quick','__'); ptTotal(); };
@@ -1538,6 +1699,7 @@ function openFavEditor(f){
   editingFav = f || null;
   $('fv-ttl').textContent = f ? 'Edit favourite' : 'New favourite';
   $('fv-name').value = f ? f.name : ''; $('fv-kcal').value = f ? f.kcal : ''; $('fv-protein').value = f && f.protein ? f.protein : ''; $('fv-note').value = f ? (f.note||'') : '';
+  segSet('fv-cat', (f && f.category) || 'main');
   $('fv-del').style.display = f ? '' : 'none';
   openSheet('sheet-fav');
 }
@@ -1545,15 +1707,56 @@ $('b-newfav').onclick = () => openFavEditor(null);
 $('fv-save').onclick = () => {
   const name = $('fv-name').value.trim(), kcal = parseFloat($('fv-kcal').value), note = $('fv-note').value.trim();
   const protein = Math.round(parseFloat($('fv-protein').value) || 0);
+  const category = ($('fv-cat').querySelector('button.on') || {}).dataset.v || 'main';
   if(!name || !(kcal > 0)) return toast('Needs a name and a kcal number');
-  if(editingFav) Object.assign(editingFav, { name, kcal:Math.round(kcal), protein, note });
-  else db.favs.push({ id:uid(), name, kcal:Math.round(kcal), protein, note, uses:0 });
+  if(editingFav) Object.assign(editingFav, { name, kcal:Math.round(kcal), protein, note, category });
+  else db.favs.push({ id:uid(), name, kcal:Math.round(kcal), protein, note, category, uses:0 });
   save(); closeSheets(); renderMe(); toast('Favourite saved');
 };
 $('fv-del').onclick = () => {
   if(!editingFav) return;
   db.favs = db.favs.filter(f => f.id !== editingFav.id);
   save(); closeSheets(); renderMe(); toast('Favourite deleted');
+};
+
+function openAddEx(date){
+  activeExDate = date || today();
+  $('exfav-search').value = ''; renderExFavList($('addex-favs'), false);
+  $('ex-name').value = ''; $('ex-kcal').value = '';
+  const same = activeExDate === today();
+  $('addex-ttl').textContent = same ? '' : 'Adding to ' + parseISO(activeExDate).getDate() + ' ' + MON[parseISO(activeExDate).getMonth()].slice(0,3);
+  $('addex-ttl').style.display = same ? 'none' : '';
+  openSheet('sheet-addex');
+}
+$('b-addex').onclick = () => openAddEx(actDate || today());
+$('exfav-search').oninput = e => renderExFavList($('addex-favs'), false, e.target.value);
+$('ex-save').onclick = () => {
+  const name = $('ex-name').value.trim(), kcal = parseFloat($('ex-kcal').value);
+  if(!name || !(kcal > 0)) return toast('Needs a name and a kcal number');
+  if($('ex-fav').checked && !db.exFavs.some(f => f.name.toLowerCase() === name.toLowerCase()))
+    db.exFavs.push({ id:uid(), name, kcal:Math.round(kcal), uses:1 });
+  closeSheets(); addCustomEx(name, kcal, activeExDate);
+};
+
+function openExFavEditor(f){
+  editingExFav = f || null;
+  $('exfv-ttl').textContent = f ? 'Edit favourite exercise' : 'New favourite exercise';
+  $('exfv-name').value = f ? f.name : ''; $('exfv-kcal').value = f ? f.kcal : '';
+  $('exfv-del').style.display = f ? '' : 'none';
+  openSheet('sheet-exfav');
+}
+$('b-newexfav').onclick = () => openExFavEditor(null);
+$('exfv-save').onclick = () => {
+  const name = $('exfv-name').value.trim(), kcal = parseFloat($('exfv-kcal').value);
+  if(!name || !(kcal > 0)) return toast('Needs a name and a kcal number');
+  if(editingExFav) Object.assign(editingExFav, { name, kcal:Math.round(kcal) });
+  else db.exFavs.push({ id:uid(), name, kcal:Math.round(kcal), uses:0 });
+  save(); closeSheets(); renderMe(); toast('Favourite exercise saved');
+};
+$('exfv-del').onclick = () => {
+  if(!editingExFav) return;
+  db.exFavs = db.exFavs.filter(f => f.id !== editingExFav.id);
+  save(); closeSheets(); renderMe(); toast('Favourite exercise deleted');
 };
 
 ['f-w','f-tw','f-age','f-h'].forEach(id => $(id).addEventListener('input', () => { renderPace(); renderProteinNote(); }));
@@ -1565,7 +1768,7 @@ $('b-save').onclick = () => {
   if(!(h >= 120 && h <= 230))   return toast('Height should be in cm');
   if(!(w > 20 && w < 400))      return toast('Starting weight should be in kg');
   if(!(tw > 20 && tw < 400))    return toast('Target weight should be in kg');
-  db.profile = { sex:draft.sex, age, h, w, tw, act:draft.act, pace:draft.pace, proteinPerKg:draft.protein };
+  db.profile = { sex:draft.sex, age, h, w, tw, pace:draft.pace, proteinPerKg:draft.protein };
   save(); toast('Profile saved'); show('today');
 };
 
@@ -1617,8 +1820,9 @@ $('f-file').onchange = e => {
     try{
       const d = JSON.parse(r.result);
       if(!d || typeof d !== 'object') throw 0;
-      db = Object.assign({ profile:null, favs:[], entries:{}, seen:{}, weighIns:{}, activity:{}, settings:{ stepGoal:8000 } }, d);
+      db = Object.assign({ profile:null, favs:[], entries:{}, seen:{}, weighIns:{}, activity:{}, customEx:{}, exFavs:[], settings:{ stepGoal:8000 } }, d);
       db.weighIns = db.weighIns || {}; db.activity = db.activity || {};
+      db.customEx = db.customEx || {}; db.exFavs = db.exFavs || [];
       db.settings = Object.assign({ stepGoal:8000 }, db.settings || {});
       renderMe._loaded = false; save(); show('today'); toast('Backup restored');
     }catch(err){ toast('That file could not be read'); }
@@ -1627,7 +1831,7 @@ $('f-file').onchange = e => {
 };
 $('b-reset').onclick = () => {
   if(!confirm('Erase your profile, entries and favourites? This cannot be undone.')) return;
-  db = { profile:null, favs:[], entries:{}, seen:{}, weighIns:{}, activity:{}, settings:{ stepGoal:8000 } };
+  db = { profile:null, favs:[], entries:{}, seen:{}, weighIns:{}, activity:{}, customEx:{}, exFavs:[], settings:{ stepGoal:8000 } };
   renderMe._loaded = false; save(); show('me'); toast('Everything erased');
 };
 $('c-prev').onclick = () => { calMonth.setMonth(calMonth.getMonth()-1); renderCal(); };
@@ -1635,21 +1839,22 @@ $('c-next').onclick = () => { calMonth.setMonth(calMonth.getMonth()+1); renderCa
 
 /* ================== BOOT ================== */
 const SEED = [
-  ['Coffee with milk',45,'1 mug',2], ['Scrambled eggs, 3',250,'3 eggs + butter',18],
-  ['Porridge with milk',320,'60 g oats',12], ['Banana',105,'medium',1],
-  ['Chicken breast',165,'100 g cooked',31], ['White rice',205,'150 g cooked',4],
-  ['Greek yoghurt',130,'200 g, 2%',20], ['Whey shake',120,'1 scoop',24],
-  ['Apple',80,'medium',0], ['Slice of bread',80,'1 slice',3],
-  ['Olive oil',120,'1 tbsp',0], ['Beer',210,'500 ml',2]
+  ['Coffee with milk',45,'1 mug',2,'drinks'], ['Scrambled eggs, 3',250,'3 eggs + butter',18,'breakfast'],
+  ['Porridge with milk',320,'60 g oats',12,'breakfast'], ['Banana',105,'medium',1,'snacks'],
+  ['Chicken breast',165,'100 g cooked',31,'main'], ['White rice',205,'150 g cooked',4,'main'],
+  ['Greek yoghurt',130,'200 g, 2%',20,'snacks'], ['Whey shake',120,'1 scoop',24,'drinks'],
+  ['Apple',80,'medium',0,'snacks'], ['Slice of bread',80,'1 slice',3,'breakfast'],
+  ['Olive oil',120,'1 tbsp',0,'main'], ['Beer',210,'500 ml',2,'drinks']
 ];
 
 (async function boot(){
   const loaded = await store.get();
-  if(loaded) db = Object.assign({ profile:null, favs:[], entries:{}, seen:{}, weighIns:{}, activity:{}, settings:{ stepGoal:8000 } }, loaded);
+  if(loaded) db = Object.assign({ profile:null, favs:[], entries:{}, seen:{}, weighIns:{}, activity:{}, customEx:{}, exFavs:[], settings:{ stepGoal:8000 } }, loaded);
   delete db.weights;
   db.weighIns = db.weighIns || {}; db.activity = db.activity || {};
+  db.customEx = db.customEx || {}; db.exFavs = db.exFavs || [];
   db.settings = Object.assign({ stepGoal:8000 }, db.settings || {});
-  if(!db.favs.length) db.favs = SEED.map(([name,kcal,note,protein]) => ({ id:uid(), name, kcal, protein:protein||0, note, uses:0 }));
+  if(!db.favs.length) db.favs = SEED.map(([name,kcal,note,protein,category]) => ({ id:uid(), name, kcal, protein:protein||0, note, category:category||'main', uses:0 }));
   calSel = today();
   if(!db.profile){ show('me', 'replace'); toast('Start here: your body and your goal'); }
   else show('today', 'replace');

@@ -71,8 +71,10 @@ Weight is simulated forward from what you log, day by day. Weigh-ins are optiona
 log one whenever you want, and it snaps that projection back to reality.
 
 - **BMR** — Mifflin-St Jeor, recalculated every simulated day from the current projected weight.
-- **Maintenance (TDEE)** — BMR × activity multiplier (1.2 to 1.9), plus whatever exercise
-  and steps were checked off in the Activity tab for that specific day (see below).
+- **Maintenance (TDEE)** — BMR × a fixed sedentary multiplier (`BASE_ACTIVITY = 1.2`), plus
+  whatever exercise and steps were checked off in the Activity tab for that specific day
+  (see below). There's deliberately no "how active are you" dropdown — that used to double-count
+  training you'd then also log. Activity is real numbers you check off, not a vibe.
 - **Daily budget** — maintenance minus your chosen pace, at 7700 kcal per kg.
   Held at a floor of 1500 kcal (male) / 1200 kcal (female) whatever the pace asks for.
 - **Projected weight** — starting weight, then for each logged day
@@ -97,15 +99,34 @@ The Activity tab holds a weekly conditioning plan (currently a tennis-specific o
 and a daily step count. Checking an exercise or hitting your step goal adds real
 calories to *that day's* maintenance and budget — the same way logging exercise
 works in most fitness apps — so a hard training day genuinely earns you more food
-without throwing off your pace.
+without throwing off your pace. A 7-day strip lets you switch which day you're
+looking at, so you can check off something from yesterday you forgot.
 
-The plan itself lives in one place in `index.html`: the `PLAN` constant near the top
+The fixed plan lives in one place in `index.html`: the `PLAN` constant near the top
 of the `<script>` block. It's a plain object keyed by weekday, and it's meant to be
 edited directly (by asking an AI assistant, or by hand) whenever the conditioning
 plan changes — nothing else in the file needs to change when it does. Each exercise
 has a stable `id` (don't reuse an id for a different exercise — it's what individual
-days' checkmarks are keyed on) and a rough `kcal` estimate at a 75&nbsp;kg reference
-weight, which is scaled automatically to the user's current weight.
+days' checkmarks are keyed on), a rough `kcal` estimate at a 75&nbsp;kg reference
+weight (scaled automatically to the user's current weight), and an optional `video`
+URL — when present, a small ▶ link appears next to the exercise, pointing at a
+YouTube (or any) demonstration. It's fine to leave `video` unset item by item; add
+links whenever you have a good one.
+
+On top of the fixed plan, **custom exercises** are free-form: "+ Add exercise" logs
+something one-off to whichever day is selected, with its own name and kcal (given
+directly, like a meal — not rescaled by bodyweight the way PLAN items are). Checking
+"save to favourite exercises" keeps it in Setup → **Favourite exercises**, so it's a
+single tap to log again later — the same favourite/new-entry pattern the food side
+already uses.
+
+## Food categories
+
+Favourites (Setup and the Add-meal sheet) can carry a `category` — Breakfast, Main,
+Snacks, or Drinks — and a chip row above the list filters by it, for picking a meal
+faster on a typical day. New favourites default to Main; edit an existing one to
+recategorise it. Meals logged to the day's ledger don't carry a category themselves —
+only the reusable favourites do, since that's what the chips are filtering.
 
 ## Turning it into a Play Store APK
 
