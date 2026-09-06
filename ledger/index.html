@@ -409,7 +409,34 @@ button{background:none;border:0;padding:0;cursor:pointer}
   <section class="screen" id="s-prog">
     <div class="top"><div><h1>Progress</h1><div class="sub" id="p-sub">—</div></div></div>
 
-    <div class="card" style="margin-top:0;padding:20px 16px">
+    <div class="card" style="margin-top:0">
+      <h3>Body</h3>
+      <div id="body-summary">
+        <div class="kv"><span class="k">Age</span><span class="v" id="bs-age">—</span></div>
+        <div class="kv"><span class="k">Height</span><span class="v" id="bs-h">—</span></div>
+        <div class="kv"><span class="k">Sex</span><span class="v" id="bs-sex">—</span></div>
+        <div class="kv"><span class="k">Starting weight</span><span class="v" id="bs-w">—</span></div>
+        <div class="kv"><span class="k">Target weight</span><span class="v" id="bs-tw">—</span></div>
+        <button class="btn ghost sm" id="b-editbody" style="margin-top:12px">Change initial setup</button>
+      </div>
+      <div id="body-form" style="display:none">
+        <div class="row2">
+          <div class="field"><label class="lbl">Age</label><input id="f-age" type="number" inputmode="numeric" min="14" max="99"></div>
+          <div class="field"><label class="lbl">Height cm</label><input id="f-h" type="number" inputmode="numeric" min="120" max="230"></div>
+        </div>
+        <div class="field"><label class="lbl">Sex (for the formula)</label>
+          <div class="seg" id="f-sex"><button data-v="m">Male</button><button data-v="f">Female</button></div>
+        </div>
+        <div class="row2">
+          <div class="field"><label class="lbl">Starting kg</label><input id="f-w" type="number" inputmode="decimal" step="0.1"></div>
+          <div class="field"><label class="lbl">Target kg</label><input id="f-tw" type="number" inputmode="decimal" step="0.1"></div>
+        </div>
+        <div class="note">Weight is projected from what you log, day by day. Changing the starting weight restarts the projection from today's number.</div>
+        <button class="btn" id="b-save" style="margin-top:14px">Save profile</button>
+      </div>
+    </div>
+
+    <div class="card" style="padding:20px 16px">
       <div class="bighero">
         <div class="lbl">Still to go</div>
         <div class="hv num" id="p-togo" style="margin-top:6px">0.0<em> kg</em></div>
@@ -426,48 +453,9 @@ button{background:none;border:0;padding:0;cursor:pointer}
     </div>
 
     <div class="card">
-      <h3>Deficit bank</h3>
-      <div class="kv"><span class="k">This week</span><span class="v" id="bank-week">0<em>kcal</em></span></div>
-      <div class="kv"><span class="k">All time</span><span class="v" id="bank-all">0<em>kcal</em></span></div>
-      <div class="kv"><span class="k">Body fat moved</span><span class="v" id="bank-fat">0<em>g</em></span></div>
-      <div class="note" id="bank-note"></div>
-    </div>
-
-    <div class="card">
-      <h3>Your numbers</h3>
-      <div class="kv"><span class="k">Maintenance (TDEE)</span><span class="v" id="p-tdee">0<em>kcal</em></span></div>
-      <div class="kv"><span class="k">Daily budget</span><span class="v" id="p-budget">0<em>kcal</em></span></div>
-      <div class="kv"><span class="k">Projected weight now</span><span class="v" id="p-cur">0<em>kg</em></span></div>
-      <div class="kv"><span class="k">BMI</span><span class="v" id="p-bmi">—</span></div>
-      <div class="kv"><span class="k">Est. arrival</span><span class="v" id="p-eta">—</span></div>
-      <div id="p-warn"></div>
-    </div>
-  </section>
-
-  <!-- ============ SETUP ============ -->
-  <section class="screen" id="s-me">
-    <div class="top"><div><h1>Setup</h1><div class="sub">Body, goal and favourites</div></div></div>
-
-    <div class="card" style="margin-top:0">
-      <h3>Body</h3>
-      <div class="row2">
-        <div class="field"><label class="lbl">Age</label><input id="f-age" type="number" inputmode="numeric" min="14" max="99"></div>
-        <div class="field"><label class="lbl">Height cm</label><input id="f-h" type="number" inputmode="numeric" min="120" max="230"></div>
-      </div>
-      <div class="field"><label class="lbl">Sex (for the formula)</label>
-        <div class="seg" id="f-sex"><button data-v="m">Male</button><button data-v="f">Female</button></div>
-      </div>
-      <div class="row2">
-        <div class="field"><label class="lbl">Starting kg</label><input id="f-w" type="number" inputmode="decimal" step="0.1"></div>
-        <div class="field"><label class="lbl">Target kg</label><input id="f-tw" type="number" inputmode="decimal" step="0.1"></div>
-      </div>
-      <div class="note">Weight is projected from what you log, day by day. Changing the starting weight restarts the projection from today's number.</div>
-    </div>
-
-    <div class="card">
       <h3>Weigh-ins</h3>
       <div class="note">Optional. The app already projects your weight from what you log — logging a real weigh-in just snaps that projection back to reality and updates your maintenance immediately.</div>
-      <button class="btn ghost sm" id="b-logweight-setup" style="margin-top:12px">+ Log today's weight</button>
+      <button class="btn ghost sm" id="b-logweight-prog" style="margin-top:12px">+ Log today's weight</button>
       <div id="weighin-list"></div>
     </div>
 
@@ -489,10 +477,30 @@ button{background:none;border:0;padding:0;cursor:pointer}
       <div class="note" id="f-proteinnote"></div>
     </div>
 
-    <div style="height:14px"></div>
-    <button class="btn" id="b-save">Save profile</button>
+    <div class="card">
+      <h3>Deficit bank</h3>
+      <div class="kv"><span class="k">This week</span><span class="v" id="bank-week">0<em>kcal</em></span></div>
+      <div class="kv"><span class="k">All time</span><span class="v" id="bank-all">0<em>kcal</em></span></div>
+      <div class="kv"><span class="k">Body fat moved</span><span class="v" id="bank-fat">0<em>g</em></span></div>
+      <div class="note" id="bank-note"></div>
+    </div>
 
     <div class="card">
+      <h3>Your numbers</h3>
+      <div class="kv"><span class="k">Maintenance (TDEE)</span><span class="v" id="p-tdee">0<em>kcal</em></span></div>
+      <div class="kv"><span class="k">Daily budget</span><span class="v" id="p-budget">0<em>kcal</em></span></div>
+      <div class="kv"><span class="k">Projected weight now</span><span class="v" id="p-cur">0<em>kg</em></span></div>
+      <div class="kv"><span class="k">BMI</span><span class="v" id="p-bmi">—</span></div>
+      <div class="kv"><span class="k">Est. arrival</span><span class="v" id="p-eta">—</span></div>
+      <div id="p-warn"></div>
+    </div>
+  </section>
+
+  <!-- ============ FAVOURITES ============ -->
+  <section class="screen" id="s-me">
+    <div class="top"><div><h1>Favourites</h1><div class="sub">Meals and exercises you reuse</div></div></div>
+
+    <div class="card" style="margin-top:0">
       <h3>Favourites</h3>
       <div class="catchips" id="mefav-cats">
         <button class="on" data-v="">All</button>
@@ -529,7 +537,7 @@ button{background:none;border:0;padding:0;cursor:pointer}
   <button data-s="activity"><svg class="glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l2 7 4-14 2 7h6"/></svg><span>Activity</span></button>
   <button data-s="cal"><svg class="glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/></svg><span>Calendar</span></button>
   <button data-s="prog"><svg class="glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 16l5-6 4 3.5L20 6"/><path d="M4 20h16"/></svg><span>Progress</span></button>
-  <button data-s="me"><svg class="glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="3.6"/><path d="M4.5 20c0-4.1 3.4-6.6 7.5-6.6s7.5 2.5 7.5 6.6"/></svg><span>Setup</span></button>
+  <button data-s="me"><svg class="glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.8 1-1a5.5 5.5 0 0 0 0-7.8Z"/></svg><span>Favourites</span></button>
 </nav>
 
 <div class="sheet" id="sheet-add">
@@ -961,7 +969,7 @@ function drawGauge(kcal, budget, st, animate){
 function syncWeightButtons(){
   const kg = db.weighIns && db.weighIns[today()];
   const logged = kg != null;
-  [['b-logweight-today', "Log today's weight"], ['b-logweight-setup', "+ Log today's weight"]].forEach(([id, label]) => {
+  [['b-logweight-today', "Log today's weight"], ['b-logweight-prog', "+ Log today's weight"]].forEach(([id, label]) => {
     const b = $(id); if(!b) return;
     b.disabled = logged;
     b.textContent = logged ? 'Weight logged — ' + kg.toFixed(1) + ' kg' : label;
@@ -1177,7 +1185,37 @@ function drawMonthCard(c, y, m){
 }
 
 /* ================== PROGRESS ================== */
+/* the initial-setup form collapses to a summary once a profile exists;
+   "Change initial setup" re-opens it, editing the very same fields */
+let bodyEditing = false;
+function renderBodyCard(){
+  const p = db.profile, editing = !p || bodyEditing;
+  $('body-summary').style.display = editing ? 'none' : '';
+  $('body-form').style.display = editing ? '' : 'none';
+  if(p){
+    $('bs-age').textContent = p.age;
+    $('bs-h').textContent = p.h + ' cm';
+    $('bs-sex').textContent = p.sex === 'm' ? 'Male' : 'Female';
+    $('bs-w').textContent = p.w.toFixed(1) + ' kg';
+    $('bs-tw').textContent = p.tw.toFixed(1) + ' kg';
+  }
+}
+$('b-editbody').onclick = () => { bodyEditing = true; renderBodyCard(); };
+
 function renderProg(){
+  const p = db.profile;
+  if(p && !renderProg._loaded){
+    draft = { sex:p.sex, pace:p.pace, protein:p.proteinPerKg || 1.8 };
+    $('f-age').value = p.age; $('f-h').value = p.h; $('f-w').value = p.w; $('f-tw').value = p.tw;
+    renderProg._loaded = true;
+  }
+  renderBodyCard();
+  segSet('f-sex', draft.sex); segSet('f-protein', String(draft.protein));
+  renderPace();
+  renderProteinNote();
+  renderWeighList();
+  syncWeightButtons();
+
   const c = calc();
   if(!c){ $('p-sub').textContent = 'Set your profile first'; return; }
   const cur = c.w, tgt = c.tw, st0 = c.startW;
@@ -1418,20 +1456,9 @@ function renderWeighList(){
 let draft = { sex:'m', pace:-0.5, protein:1.8 };
 
 function renderMe(){
-  const p = db.profile;
-  if(p && !renderMe._loaded){
-    draft = { sex:p.sex, pace:p.pace, protein:p.proteinPerKg || 1.8 };
-    $('f-age').value = p.age; $('f-h').value = p.h; $('f-w').value = p.w; $('f-tw').value = p.tw;
-    renderMe._loaded = true;
-  }
-  segSet('f-sex', draft.sex); segSet('f-protein', String(draft.protein));
   segSet('mefav-cats', meFavCat);
-  renderPace();
-  renderProteinNote();
   renderFavList($('me-favs'), true, '', meFavCat);
   renderExFavList($('exme-favs'), true);
-  renderWeighList();
-  syncWeightButtons();
 }
 
 function renderProteinNote(){
@@ -1700,7 +1727,7 @@ document.addEventListener('change', e => {
 });
 
 function openAdd(date){
-  if(!db.profile) return toast('Add your profile in Setup first');
+  if(!db.profile) return toast('Add your profile in Progress first');
   activeDate = date || today();
   addFavCat = ''; segSet('addfav-cats', '');
   $('fav-search').value = ''; renderFavList($('add-favs'), false, '', addFavCat);
@@ -1839,12 +1866,15 @@ $('b-save').onclick = () => {
   if(!(h >= 120 && h <= 230))   return toast('Height should be in cm');
   if(!(w > 20 && w < 400))      return toast('Starting weight should be in kg');
   if(!(tw > 20 && tw < 400))    return toast('Target weight should be in kg');
+  const firstTime = !db.profile;
   db.profile = { sex:draft.sex, age, h, w, tw, pace:draft.pace, proteinPerKg:draft.protein };
-  save(); toast('Profile saved'); show('today');
+  bodyEditing = false;
+  save(); toast('Profile saved');
+  if(firstTime) show('today'); else renderProg();
 };
 
 $('b-logweight-today').onclick = () => openWeightSheet(today());
-$('b-logweight-setup').onclick = () => openWeightSheet(today());
+$('b-logweight-prog').onclick = () => openWeightSheet(today());
 $('wt-save').onclick = () => {
   const kg = parseFloat($('wt-kg').value);
   if(!(kg > 20 && kg < 400)) return toast('Enter a realistic weight in kg');
@@ -1896,7 +1926,7 @@ $('f-file').onchange = e => {
       db.customEx = db.customEx || {}; db.exFavs = db.exFavs || [];
       db.settings = Object.assign({ stepGoal:8000 }, db.settings || {});
       db.favs.forEach(f => { if(!f.categories) f.categories = f.category ? [f.category] : ['main']; });
-      renderMe._loaded = false; save(); show('today'); toast('Backup restored');
+      renderProg._loaded = false; bodyEditing = false; save(); show('today'); toast('Backup restored');
     }catch(err){ toast('That file could not be read'); }
   };
   r.readAsText(f);
@@ -1904,7 +1934,7 @@ $('f-file').onchange = e => {
 $('b-reset').onclick = () => {
   if(!confirm('Erase your profile, entries and favourites? This cannot be undone.')) return;
   db = { profile:null, favs:[], entries:{}, seen:{}, weighIns:{}, activity:{}, customEx:{}, exFavs:[], settings:{ stepGoal:8000 } };
-  renderMe._loaded = false; save(); show('me'); toast('Everything erased');
+  renderProg._loaded = false; bodyEditing = false; save(); show('prog'); toast('Everything erased');
 };
 $('c-prev').onclick = () => { calMonth.setMonth(calMonth.getMonth()-1); renderCal(); };
 $('c-next').onclick = () => { calMonth.setMonth(calMonth.getMonth()+1); renderCal(); };
@@ -1931,7 +1961,7 @@ const SEED = [
   db.favs.forEach(f => { if(!f.categories) f.categories = f.category ? [f.category] : ['main']; });
   if(!db.favs.length) db.favs = SEED.map(([name,kcal,note,protein,categories]) => ({ id:uid(), name, kcal, protein:protein||0, note, categories:categories||['main'], uses:0 }));
   calSel = today();
-  if(!db.profile){ show('me', 'replace'); toast('Start here: your body and your goal'); }
+  if(!db.profile){ show('prog', 'replace'); toast('Start here: your body and your goal'); }
   else show('today', 'replace');
   try{ if('serviceWorker' in navigator && location.protocol.startsWith('http'))
     navigator.serviceWorker.register('sw.js').catch(()=>{}); }catch(e){}

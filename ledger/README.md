@@ -20,6 +20,25 @@ The service worker needs `http(s)`, not `file://`.
 | `sw.js` | Offline cache, network-first so redeploys are picked up. |
 | `icon-*.png` | Home screen icons. |
 
+## Screens
+
+Five tabs: **Today** (the gauge and today's log), **Activity** (the conditioning
+plan, steps, custom exercises), **Calendar**, **Progress**, **Favourites**.
+
+Progress is also where your body stats, weigh-ins, pace and protein target live —
+there's no separate settings screen. The **Body** card (age, height, sex,
+starting/target weight) is the one exception to "everything's always visible":
+before a profile exists it's shown as an open form; once saved it collapses to a
+summary with a **Change initial setup** button, so the numbers you basically never
+touch again don't sit at the top of your progress screen every time. Weigh-ins,
+Pace and Protein stay fully visible underneath, right after the projected-weight
+chart — those get touched often enough (or need to be visible while you're still
+filling in the Body form for the first time) that collapsing them wouldn't help.
+
+Favourites holds exactly what its name says — reusable meals and reusable
+exercises — plus **Data** (export/restore/erase) at the bottom, since it has to
+live somewhere and this is the closest thing left to a settings screen.
+
 ## Colour
 
 One rule: **colour is reserved for verdicts, everything else is ink.**
@@ -62,16 +81,16 @@ diacritics render properly). Four weights are used and nothing else:
 ## Where the data lives
 
 `localStorage` on the device, under the key `ledger-v2`. Nothing leaves the phone,
-no account, no server. Setup → **Export a backup file** writes a JSON you can restore later.
+no account, no server. Favourites → **Export a backup file** writes a JSON you can restore later.
 Clearing Chrome site data wipes it, so export before you do that.
 
 ## The maths
 
 Weight is simulated forward from what you log, day by day. Weigh-ins are optional —
 log one whenever you want, and it snaps that projection back to reality. Once
-today's weigh-in exists, both "Log today's weight" buttons (Today and Setup) grey
+today's weigh-in exists, both "Log today's weight" buttons (Today and Progress) grey
 out and show the logged number instead, so there's no way to accidentally log two
-for the same day; deleting it from Setup's weigh-in list re-enables them.
+for the same day; deleting it from Progress's weigh-in list re-enables them.
 
 - **BMR** — Mifflin-St Jeor, recalculated every simulated day from the current projected weight.
 - **Maintenance (TDEE)** — BMR × a fixed sedentary multiplier (`BASE_ACTIVITY = 1.2`), plus
@@ -86,7 +105,7 @@ for the same day; deleting it from Setup's weigh-in list re-enables them.
   If a real weigh-in exists for a day, the projection snaps to that number instead and
   keeps projecting forward from there — the deficit-bank stats stay purely food-log driven,
   only the weight trajectory gets recalibrated.
-- **Protein target** — bodyweight × your chosen g/kg (Setup → Protein). Meals and
+- **Protein target** — bodyweight × your chosen g/kg (Progress → Protein). Meals and
   favourites can carry a protein figure, and the Today screen shows a simple bar
   against that target — more is never penalised the way excess calories are.
 - **To go** — projected weight now, minus target weight.
@@ -119,20 +138,20 @@ there's a good link for them.
 
 **Favourite exercises** can be logged two ways. Most are a single fixed amount
 (an evening walk, say) — tap it and it's logged. Ones marked **"Log by count"**
-(Setup → Favourite exercises) instead store a kcal-per-unit figure and a unit
+(Favourites → Favourite exercises) instead store a kcal-per-unit figure and a unit
 label (e.g. `0.5` kcal per rep) — tapping one opens a small sheet to type how many
 you actually did (28 pull-ups → 14 kcal), rather than logging a fixed guess.
 
 On top of the fixed plan, **custom exercises** are free-form: "+ Add exercise" logs
 something one-off to whichever day is selected, with its own name and kcal (given
 directly, like a meal — not rescaled by bodyweight the way PLAN items are). Checking
-"save to favourite exercises" keeps it in Setup → **Favourite exercises**, so it's a
+"save to favourite exercises" keeps it in Favourites → **Favourite exercises**, so it's a
 single tap to log again later — the same favourite/new-entry pattern the food side
 already uses.
 
 ## Food categories
 
-Favourites (Setup and the Add-meal sheet) can carry any combination of
+Favourites (the Favourites tab and the Add-meal sheet) can carry any combination of
 `categories` — Breakfast, Main, Snacks, Drinks — since plenty of foods are more
 than one thing (yoghurt is both a snack and a breakfast). A chip row above the
 list filters by a single category at a time, for picking something faster on a
