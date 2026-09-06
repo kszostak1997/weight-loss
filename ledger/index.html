@@ -124,6 +124,7 @@ button{background:none;border:0;padding:0;cursor:pointer}
 .btn.ghost{background:var(--card);color:var(--ink);border:1px solid var(--line)}
 .btn.sm{padding:12px;font-size:14px;border-radius:12px}
 .btn.danger{background:var(--over-bg);color:var(--over)}
+.btn:disabled{opacity:.5;pointer-events:none}
 
 /* ---------- nav ---------- */
 .nav{position:fixed;left:0;right:0;bottom:0;z-index:60;display:flex;max-width:520px;margin:0 auto;
@@ -631,11 +632,27 @@ button{background:none;border:0;padding:0;cursor:pointer}
   <div class="panel">
     <div class="grab"></div>
     <h2 id="exfv-ttl">New favourite exercise</h2>
-    <div class="field"><label class="lbl">Name</label><input id="exfv-name" autocomplete="off"></div>
-    <div class="field"><label class="lbl">Kcal</label><input id="exfv-kcal" type="number" inputmode="numeric"></div>
+    <div class="field"><label class="lbl">Name</label><input id="exfv-name" placeholder="Pull-up" autocomplete="off"></div>
+    <label class="check"><input type="checkbox" id="exfv-bycount"> Log by count (e.g. reps)</label>
+    <div class="row2">
+      <div class="field"><label class="lbl" id="exfv-kcal-lbl">Kcal</label><input id="exfv-kcal" type="number" inputmode="decimal" step="0.1"></div>
+      <div class="field" id="exfv-unit-wrap" style="display:none"><label class="lbl">Unit</label><input id="exfv-unit" placeholder="reps" autocomplete="off"></div>
+    </div>
     <button class="btn" id="exfv-save">Save favourite exercise</button>
     <div style="height:8px"></div>
     <button class="btn sm danger" id="exfv-del" style="display:none">Delete favourite exercise</button>
+  </div>
+</div>
+
+<div class="sheet" id="sheet-excount">
+  <div class="veil" data-close></div>
+  <div class="panel">
+    <div class="grab"></div>
+    <h2 id="exct-name">Exercise</h2>
+    <div class="field"><label class="lbl" id="exct-unitlbl">How many reps?</label><input id="exct-count" type="number" inputmode="numeric" placeholder="e.g. 28"></div>
+    <div class="kv"><span class="k">That is</span><span class="v" id="exct-total">0<em>kcal</em></span></div>
+    <div style="height:14px"></div>
+    <button class="btn" id="exct-add">Add to this day</button>
   </div>
 </div>
 
@@ -733,55 +750,55 @@ const BASE_ACTIVITY = 1.2;
 
 const PLAN = {
   mon: { title:'Match day', items:[
-    { id:'mon-warmup',   label:'Warm-up',                    detail:'8 min, before the match',       kcal:50  },
+    { id:'mon-warmup',   label:'Warm-up',                    detail:'8 min, before the match',       kcal:50,  video:'https://www.youtube.com/watch?v=3y1Nm-iRkyE' },
     { id:'mon-match',    label:'Match',                       detail:'as is',                          kcal:650 },
-    { id:'mon-mobility', label:'Cooldown + mobility anchor',  detail:'10 min',                         kcal:25  },
+    { id:'mon-mobility', label:'Cooldown + mobility anchor',  detail:'10 min',                         kcal:25,  video:'https://www.youtube.com/watch?v=tMlpDXwYi6U' },
   ]},
   tue: { title:'Recovery', items:[
     { id:'tue-cardio',   label:'Easy cardio',                 detail:'25 min, conversational pace',    kcal:200 },
-    { id:'tue-armcare',  label:'Arm care',                     detail:'8 min band work',                kcal:20  },
-    { id:'tue-mobility', label:'Daily mobility anchor',        detail:'10 min',                         kcal:25  },
+    { id:'tue-armcare',  label:'Arm care',                     detail:'8 min band work',                kcal:20,  video:'https://www.youtube.com/watch?v=ybNV36DoRfY' },
+    { id:'tue-mobility', label:'Daily mobility anchor',        detail:'10 min',                         kcal:25,  video:'https://www.youtube.com/watch?v=tMlpDXwYi6U' },
   ]},
   wed: { title:'Tennis training + sparring', items:[
-    { id:'wed-warmup',   label:'Warm-up',                     detail:'8 min, before training',         kcal:50  },
+    { id:'wed-warmup',   label:'Warm-up',                     detail:'8 min, before training',         kcal:50,  video:'https://www.youtube.com/watch?v=3y1Nm-iRkyE' },
     { id:'wed-training', label:'Training + sparring',          detail:'as is',                           kcal:550 },
-    { id:'wed-mobility', label:'Daily mobility anchor',         detail:'10 min',                          kcal:25  },
+    { id:'wed-mobility', label:'Daily mobility anchor',         detail:'10 min',                          kcal:25,  video:'https://www.youtube.com/watch?v=tMlpDXwYi6U' },
   ]},
   thu: { title:'Strength A — lower body & trunk', items:[
-    { id:'thu-splitsquat',  label:'Bulgarian split squat',    detail:'3 rounds × 8–10 / leg',          kcal:35 },
-    { id:'thu-rdl',         label:'Single-leg RDL',            detail:'3 rounds × 8 / leg, 3s lowering', kcal:30 },
-    { id:'thu-glutebridge', label:'Single-leg glute bridge',   detail:'3 rounds × 12 / leg',            kcal:25 },
-    { id:'thu-copenhagen',  label:'Copenhagen plank',           detail:'3 rounds × 20–30s / side',       kcal:20 },
-    { id:'thu-laterallunge',label:'Lateral lunge',              detail:'3 rounds × 8 / side',            kcal:25 },
-    { id:'thu-calfraise',   label:'Single-leg calf raise',      detail:'3 rounds × 15 / leg',            kcal:15 },
-    { id:'thu-deadbug',     label:'Dead bug',                   detail:'3 rounds × 10 / side',           kcal:15 },
-    { id:'thu-sideplank',   label:'Side plank',                  detail:'3 rounds × 30–40s / side',       kcal:15 },
-    { id:'thu-mobility',    label:'Daily mobility anchor',       detail:'10 min',                          kcal:25 },
+    { id:'thu-splitsquat',  label:'Bulgarian split squat',    detail:'3 rounds × 8–10 / leg',          kcal:35, video:'https://www.youtube.com/watch?v=VPhhE6bBzZE' },
+    { id:'thu-rdl',         label:'Single-leg RDL',            detail:'3 rounds × 8 / leg, 3s lowering', kcal:30, video:'https://www.youtube.com/watch?v=Zfr6wizR8rs' },
+    { id:'thu-glutebridge', label:'Single-leg glute bridge',   detail:'3 rounds × 12 / leg',            kcal:25, video:'https://www.youtube.com/watch?v=VUl8R0kn6v4' },
+    { id:'thu-copenhagen',  label:'Copenhagen plank',           detail:'3 rounds × 20–30s / side',       kcal:20, video:'https://www.youtube.com/watch?v=nhGK-DxiGBE' },
+    { id:'thu-laterallunge',label:'Lateral lunge',              detail:'3 rounds × 8 / side',            kcal:25, video:'https://www.youtube.com/watch?v=VYMwJERueAI' },
+    { id:'thu-calfraise',   label:'Single-leg calf raise',      detail:'3 rounds × 15 / leg',            kcal:15, video:'https://www.youtube.com/watch?v=IphGZ8OlfYg' },
+    { id:'thu-deadbug',     label:'Dead bug',                   detail:'3 rounds × 10 / side',           kcal:15, video:'https://www.youtube.com/watch?v=bxn9FBrt4-A' },
+    { id:'thu-sideplank',   label:'Side plank',                  detail:'3 rounds × 30–40s / side',       kcal:15, video:'https://www.youtube.com/watch?v=0M-erHBl48U' },
+    { id:'thu-mobility',    label:'Daily mobility anchor',       detail:'10 min',                          kcal:25, video:'https://www.youtube.com/watch?v=tMlpDXwYi6U' },
   ]},
   fri: { title:'Technical + footwork intervals', items:[
-    { id:'fri-warmup',   label:'Warm-up',                     detail:'8 min, before hitting',          kcal:50  },
-    { id:'fri-wall',     label:'Wall: forehand + backhand',    detail:'20 min',                          kcal:130 },
-    { id:'fri-serve',    label:'Serve basket',                  detail:'40–60 serves',                    kcal:90  },
-    { id:'fri-footwork', label:'On-court footwork intervals',    detail:'6–8 rounds, 20s on / 40s walk',   kcal:150 },
-    { id:'fri-mobility', label:'Daily mobility anchor',           detail:'10 min',                          kcal:25  },
+    { id:'fri-warmup',   label:'Warm-up',                     detail:'8 min, before hitting',          kcal:50,  video:'https://www.youtube.com/watch?v=3y1Nm-iRkyE' },
+    { id:'fri-wall',     label:'Wall: forehand + backhand',    detail:'20 min',                          kcal:130, video:'https://www.youtube.com/watch?v=v8iqXIqO0gk' },
+    { id:'fri-serve',    label:'Serve basket',                  detail:'40–60 serves',                    kcal:90,  video:'https://www.youtube.com/watch?v=YNuMCciEyjI' },
+    { id:'fri-footwork', label:'On-court footwork intervals',    detail:'6–8 rounds, 20s on / 40s walk',   kcal:150, video:'https://www.youtube.com/watch?v=DSgVpGuR7Dk' },
+    { id:'fri-mobility', label:'Daily mobility anchor',           detail:'10 min',                          kcal:25,  video:'https://www.youtube.com/watch?v=tMlpDXwYi6U' },
   ]},
   sat: { title:'Strength B — upper, trunk, power', items:[
-    { id:'sat-squatjump', label:'Squat jumps',                 detail:'3 × 8',                          kcal:25 },
-    { id:'sat-bounds',    label:'Lateral bounds',                detail:'3 × 6 / side',                   kcal:20 },
-    { id:'sat-reaction',  label:'Split-step + reaction sprint',   detail:'3 × 20s',                        kcal:20 },
-    { id:'sat-pushup',    label:'Push-ups',                       detail:'3 rounds × max minus 2',         kcal:25 },
-    { id:'sat-row',       label:'Inverted rows (or pull-ups)',     detail:'3 rounds × 6–10',                kcal:20 },
-    { id:'sat-pike',      label:'Pike push-ups',                   detail:'3 rounds × 8',                    kcal:15 },
-    { id:'sat-ytw',       label:'Prone Y–T–W',                     detail:'3 rounds × 8 each',               kcal:10 },
-    { id:'sat-hollow',    label:'Hollow hold',                      detail:'3 rounds × 30s',                  kcal:15 },
-    { id:'sat-taps',      label:'Plank shoulder taps',              detail:'3 rounds × 20',                   kcal:15 },
-    { id:'sat-birddog',   label:'Bird dog',                          detail:'3 rounds × 10 / side',            kcal:10 },
-    { id:'sat-mobility',  label:'Daily mobility anchor',              detail:'10 min',                          kcal:25 },
+    { id:'sat-squatjump', label:'Squat jumps',                 detail:'3 × 8',                          kcal:25, video:'https://www.youtube.com/watch?v=tZSYZdtbONc' },
+    { id:'sat-bounds',    label:'Lateral bounds',                detail:'3 × 6 / side',                   kcal:20, video:'https://www.youtube.com/watch?v=1IukLCtNqvM' },
+    { id:'sat-reaction',  label:'Split-step + reaction sprint',   detail:'3 × 20s',                        kcal:20, video:'https://www.youtube.com/watch?v=NeK6dNDynKg' },
+    { id:'sat-pushup',    label:'Push-ups',                       detail:'3 rounds × max minus 2',         kcal:25, video:'https://www.youtube.com/watch?v=WDIpL0pjun0' },
+    { id:'sat-row',       label:'Inverted rows (or pull-ups)',     detail:'3 rounds × 6–10',                kcal:20, video:'https://www.youtube.com/watch?v=ytFnYaoIkSg' },
+    { id:'sat-pike',      label:'Pike push-ups',                   detail:'3 rounds × 8',                    kcal:15, video:'https://www.youtube.com/watch?v=paCOGgmLCA0' },
+    { id:'sat-ytw',       label:'Prone Y–T–W',                     detail:'3 rounds × 8 each',               kcal:10, video:'https://www.youtube.com/watch?v=SSy4XHJHIvw' },
+    { id:'sat-hollow',    label:'Hollow hold',                      detail:'3 rounds × 30s',                  kcal:15, video:'https://www.youtube.com/watch?v=0yPin8hSc8o' },
+    { id:'sat-taps',      label:'Plank shoulder taps',              detail:'3 rounds × 20',                   kcal:15, video:'https://www.youtube.com/watch?v=eT93C-xUZI8' },
+    { id:'sat-birddog',   label:'Bird dog',                          detail:'3 rounds × 10 / side',            kcal:10, video:'https://www.youtube.com/watch?v=ZdAHe9_HeEw' },
+    { id:'sat-mobility',  label:'Daily mobility anchor',              detail:'10 min',                          kcal:25, video:'https://www.youtube.com/watch?v=tMlpDXwYi6U' },
   ]},
   sun: { title:'Long easy + mobility', items:[
     { id:'sun-cardio',   label:'Easy zone 2 cardio',            detail:'35–45 min',                      kcal:300 },
-    { id:'sun-armcare',  label:'Arm care',                       detail:'8 min band work',                 kcal:20  },
-    { id:'sun-mobility', label:'Long mobility session',           detail:'10 min +',                         kcal:30  },
+    { id:'sun-armcare',  label:'Arm care',                       detail:'8 min band work',                 kcal:20,  video:'https://www.youtube.com/watch?v=ybNV36DoRfY' },
+    { id:'sun-mobility', label:'Long mobility session',           detail:'10 min +',                         kcal:30,  video:'https://www.youtube.com/watch?v=tMlpDXwYi6U' },
   ]},
 };
 
@@ -939,10 +956,23 @@ function drawGauge(kcal, budget, st, animate){
   else set();
 }
 
+/* a weigh-in already logged for today disables both entry points until
+   it's deleted again, so there's no way to end up with two for one day */
+function syncWeightButtons(){
+  const kg = db.weighIns && db.weighIns[today()];
+  const logged = kg != null;
+  [['b-logweight-today', "Log today's weight"], ['b-logweight-setup', "+ Log today's weight"]].forEach(([id, label]) => {
+    const b = $(id); if(!b) return;
+    b.disabled = logged;
+    b.textContent = logged ? 'Weight logged — ' + kg.toFixed(1) + ' kg' : label;
+  });
+}
+
 /* ================== TODAY ================== */
 function renderToday(animate){
   const c = calc(), d = today(), now = new Date();
   $('t-date').textContent = DAY[now.getDay()] + ', ' + now.getDate() + ' ' + MON[now.getMonth()];
+  syncWeightButtons();
 
   if(!c){
     $('t-sub').textContent = 'Add your body and goal to get a budget';
@@ -1401,6 +1431,7 @@ function renderMe(){
   renderFavList($('me-favs'), true, '', meFavCat);
   renderExFavList($('exme-favs'), true);
   renderWeighList();
+  syncWeightButtons();
 }
 
 function renderProteinNote(){
@@ -1445,10 +1476,14 @@ function renderPace(){
 }
 
 function segSet(id, val){ [...$(id).children].forEach(b => b.classList.toggle('on', b.dataset.v === val)); }
+/* for multi-select seg groups (food categories) — a food can be several
+   things at once, e.g. yoghurt is both a snack and a breakfast */
+function setMultiSeg(id, vals){ [...$(id).children].forEach(b => b.classList.toggle('on', (vals||[]).includes(b.dataset.v))); }
+function getMultiSeg(id){ return [...$(id).querySelectorAll('button.on')].map(b => b.dataset.v); }
 
 function renderFavList(box, editable, filter, cat){
   const q = (filter||'').toLowerCase();
-  const list = db.favs.filter(f => (!q || f.name.toLowerCase().includes(q)) && (!cat || f.category === cat))
+  const list = db.favs.filter(f => (!q || f.name.toLowerCase().includes(q)) && (!cat || (f.categories||[]).includes(cat)))
                       .sort((a,b) => (b.uses||0) - (a.uses||0) || a.name.localeCompare(b.name));
   if(!list.length){
     box.innerHTML = '<div class="empty"><b>' + (q || cat ? 'No match' : 'No favourites yet') + '</b>' +
@@ -1475,8 +1510,8 @@ function renderExFavList(box, editable, filter){
   }
   box.innerHTML = list.map(f =>
     '<button class="fav" data-exfav="' + f.id + '">' +
-      '<div class="fname">' + esc(f.name) + '</div>' +
-      '<div class="fkcal">' + fmt(f.kcal) + '</div>' +
+      '<div class="fname">' + esc(f.name) + (f.byCount ? '<div class="fmeta">Enter a count when you log it</div>' : '') + '</div>' +
+      '<div class="fkcal">' + (f.byCount ? fmt(f.kcal) + '/' + esc(f.unit||'rep') : fmt(f.kcal)) + '</div>' +
       '<div class="plus">' + (editable ? ICON_PEN : ICON_PLUS) + '</div></button>').join('');
 }
 
@@ -1610,6 +1645,7 @@ document.addEventListener('click', e => {
   if(exfav){
     const f = db.exFavs.find(x => x.id === exfav.dataset.exfav); if(!f) return;
     if(exfav.closest('#exme-favs')) return openExFavEditor(f);
+    if(f.byCount) return openExCount(f);
     f.uses = (f.uses||0) + 1; save();
     closeSheets(); addCustomEx(f.name, f.kcal, activeExDate);
     return;
@@ -1619,7 +1655,7 @@ document.addEventListener('click', e => {
   const pr = e.target.closest('#f-protein button');
   if(pr){ draft.protein = +pr.dataset.v; segSet('f-protein', pr.dataset.v); renderProteinNote(); return; }
   const catseg = e.target.closest('#n-cat button, #fv-cat button');
-  if(catseg){ segSet(catseg.parentNode.id, catseg.dataset.v); return; }
+  if(catseg){ catseg.classList.toggle('on'); return; }
   const chip = e.target.closest('.catchips button');
   if(chip){
     const chips = chip.parentNode;
@@ -1640,7 +1676,7 @@ document.addEventListener('click', e => {
   const delwi = e.target.closest('[data-delwi]');
   if(delwi){
     if(db.weighIns) delete db.weighIns[delwi.dataset.delwi];
-    save(); renderWeighList(); refreshAfterActivityChange();
+    save(); renderWeighList(); syncWeightButtons(); refreshAfterActivityChange();
     toast('Weigh-in removed'); return;
   }
   const delex = e.target.closest('[data-delex]');
@@ -1669,7 +1705,7 @@ function openAdd(date){
   addFavCat = ''; segSet('addfav-cats', '');
   $('fav-search').value = ''; renderFavList($('add-favs'), false, '', addFavCat);
   $('n-name').value = ''; $('n-kcal').value = ''; $('n-protein').value = ''; $('n-mult').value = 1;
-  segSet('n-cat', 'main');
+  setMultiSeg('n-cat', []);
   const same = activeDate === today();
   $('add-ttl').textContent = same ? '' : 'Adding to ' + parseISO(activeDate).getDate() + ' ' + MON[parseISO(activeDate).getMonth()].slice(0,3);
   $('add-ttl').style.display = same ? 'none' : '';
@@ -1682,10 +1718,10 @@ $('fav-search').oninput = e => renderFavList($('add-favs'), false, e.target.valu
 $('n-save').onclick = () => {
   const name = $('n-name').value.trim(), kcal = parseFloat($('n-kcal').value), mult = parseFloat($('n-mult').value) || 1;
   const protein = parseFloat($('n-protein').value) || 0;
-  const category = ($('n-cat').querySelector('button.on') || {}).dataset.v || 'main';
+  let categories = getMultiSeg('n-cat'); if(!categories.length) categories = ['main'];
   if(!name || !(kcal > 0)) return toast('Needs a name and a kcal number');
   if($('n-fav').checked && !db.favs.some(f => f.name.toLowerCase() === name.toLowerCase()))
-    db.favs.push({ id:uid(), name, kcal:Math.round(kcal), protein:Math.round(protein), note:'', category, uses:1 });
+    db.favs.push({ id:uid(), name, kcal:Math.round(kcal), protein:Math.round(protein), note:'', categories, uses:1 });
   closeSheets(); addMeal(name, kcal * mult, activeDate, protein * mult);
 };
 $('pt-mult').oninput = () => { segSet('pt-quick','__'); ptTotal(); };
@@ -1699,7 +1735,7 @@ function openFavEditor(f){
   editingFav = f || null;
   $('fv-ttl').textContent = f ? 'Edit favourite' : 'New favourite';
   $('fv-name').value = f ? f.name : ''; $('fv-kcal').value = f ? f.kcal : ''; $('fv-protein').value = f && f.protein ? f.protein : ''; $('fv-note').value = f ? (f.note||'') : '';
-  segSet('fv-cat', (f && f.category) || 'main');
+  setMultiSeg('fv-cat', (f && f.categories) || []);
   $('fv-del').style.display = f ? '' : 'none';
   openSheet('sheet-fav');
 }
@@ -1707,10 +1743,10 @@ $('b-newfav').onclick = () => openFavEditor(null);
 $('fv-save').onclick = () => {
   const name = $('fv-name').value.trim(), kcal = parseFloat($('fv-kcal').value), note = $('fv-note').value.trim();
   const protein = Math.round(parseFloat($('fv-protein').value) || 0);
-  const category = ($('fv-cat').querySelector('button.on') || {}).dataset.v || 'main';
+  let categories = getMultiSeg('fv-cat'); if(!categories.length) categories = ['main'];
   if(!name || !(kcal > 0)) return toast('Needs a name and a kcal number');
-  if(editingFav) Object.assign(editingFav, { name, kcal:Math.round(kcal), protein, note, category });
-  else db.favs.push({ id:uid(), name, kcal:Math.round(kcal), protein, note, category, uses:0 });
+  if(editingFav) Object.assign(editingFav, { name, kcal:Math.round(kcal), protein, note, categories });
+  else db.favs.push({ id:uid(), name, kcal:Math.round(kcal), protein, note, categories, uses:0 });
   save(); closeSheets(); renderMe(); toast('Favourite saved');
 };
 $('fv-del').onclick = () => {
@@ -1738,25 +1774,60 @@ $('ex-save').onclick = () => {
   closeSheets(); addCustomEx(name, kcal, activeExDate);
 };
 
+function syncExfvByCount(){
+  const on = $('exfv-bycount').checked;
+  $('exfv-kcal-lbl').textContent = on ? 'Kcal per rep' : 'Kcal';
+  $('exfv-unit-wrap').style.display = on ? '' : 'none';
+}
+$('exfv-bycount').onchange = syncExfvByCount;
+
 function openExFavEditor(f){
   editingExFav = f || null;
   $('exfv-ttl').textContent = f ? 'Edit favourite exercise' : 'New favourite exercise';
   $('exfv-name').value = f ? f.name : ''; $('exfv-kcal').value = f ? f.kcal : '';
+  $('exfv-bycount').checked = !!(f && f.byCount);
+  $('exfv-unit').value = (f && f.unit) || 'reps';
+  syncExfvByCount();
   $('exfv-del').style.display = f ? '' : 'none';
   openSheet('sheet-exfav');
 }
 $('b-newexfav').onclick = () => openExFavEditor(null);
 $('exfv-save').onclick = () => {
   const name = $('exfv-name').value.trim(), kcal = parseFloat($('exfv-kcal').value);
+  const byCount = $('exfv-bycount').checked, unit = $('exfv-unit').value.trim() || 'reps';
   if(!name || !(kcal > 0)) return toast('Needs a name and a kcal number');
-  if(editingExFav) Object.assign(editingExFav, { name, kcal:Math.round(kcal) });
-  else db.exFavs.push({ id:uid(), name, kcal:Math.round(kcal), uses:0 });
+  const kcalVal = byCount ? Math.round(kcal * 100) / 100 : Math.round(kcal);
+  if(editingExFav) Object.assign(editingExFav, { name, kcal:kcalVal, byCount, unit });
+  else db.exFavs.push({ id:uid(), name, kcal:kcalVal, byCount, unit, uses:0 });
   save(); closeSheets(); renderMe(); toast('Favourite exercise saved');
 };
 $('exfv-del').onclick = () => {
   if(!editingExFav) return;
   db.exFavs = db.exFavs.filter(f => f.id !== editingExFav.id);
   save(); closeSheets(); renderMe(); toast('Favourite exercise deleted');
+};
+
+/* tapping a by-count favourite (e.g. "Pull-up") opens a small sheet to
+   type how many were actually done, rather than logging a fixed amount */
+let pendingEx = null;
+function openExCount(f){
+  pendingEx = f;
+  $('exct-name').textContent = f.name;
+  $('exct-unitlbl').textContent = 'How many ' + (f.unit || 'reps') + '?';
+  $('exct-count').value = '';
+  exctTotal();
+  openSheet('sheet-excount');
+}
+function exctTotal(){
+  const n = parseFloat($('exct-count').value) || 0;
+  setV('exct-total', fmt(pendingEx.kcal * n), 'kcal');
+}
+$('exct-count').oninput = exctTotal;
+$('exct-add').onclick = () => {
+  const n = parseFloat($('exct-count').value) || 0;
+  if(!(n > 0)) return toast('Enter how many');
+  pendingEx.uses = (pendingEx.uses||0) + 1; save();
+  closeSheets(); addCustomEx(pendingEx.name + ' × ' + n + ' ' + (pendingEx.unit||'reps'), pendingEx.kcal * n, activeExDate);
 };
 
 ['f-w','f-tw','f-age','f-h'].forEach(id => $(id).addEventListener('input', () => { renderPace(); renderProteinNote(); }));
@@ -1779,12 +1850,12 @@ $('wt-save').onclick = () => {
   if(!(kg > 20 && kg < 400)) return toast('Enter a realistic weight in kg');
   if(!db.weighIns) db.weighIns = {};
   db.weighIns[weightDate] = +kg.toFixed(1);
-  save(); closeSheets(); renderWeighList(); refreshAfterActivityChange();
+  save(); closeSheets(); renderWeighList(); syncWeightButtons(); refreshAfterActivityChange();
   toast('Weight logged');
 };
 $('wt-del').onclick = () => {
   if(db.weighIns) delete db.weighIns[weightDate];
-  save(); closeSheets(); renderWeighList(); refreshAfterActivityChange();
+  save(); closeSheets(); renderWeighList(); syncWeightButtons(); refreshAfterActivityChange();
   toast('Weigh-in removed');
 };
 
@@ -1824,6 +1895,7 @@ $('f-file').onchange = e => {
       db.weighIns = db.weighIns || {}; db.activity = db.activity || {};
       db.customEx = db.customEx || {}; db.exFavs = db.exFavs || [];
       db.settings = Object.assign({ stepGoal:8000 }, db.settings || {});
+      db.favs.forEach(f => { if(!f.categories) f.categories = f.category ? [f.category] : ['main']; });
       renderMe._loaded = false; save(); show('today'); toast('Backup restored');
     }catch(err){ toast('That file could not be read'); }
   };
@@ -1839,12 +1911,12 @@ $('c-next').onclick = () => { calMonth.setMonth(calMonth.getMonth()+1); renderCa
 
 /* ================== BOOT ================== */
 const SEED = [
-  ['Coffee with milk',45,'1 mug',2,'drinks'], ['Scrambled eggs, 3',250,'3 eggs + butter',18,'breakfast'],
-  ['Porridge with milk',320,'60 g oats',12,'breakfast'], ['Banana',105,'medium',1,'snacks'],
-  ['Chicken breast',165,'100 g cooked',31,'main'], ['White rice',205,'150 g cooked',4,'main'],
-  ['Greek yoghurt',130,'200 g, 2%',20,'snacks'], ['Whey shake',120,'1 scoop',24,'drinks'],
-  ['Apple',80,'medium',0,'snacks'], ['Slice of bread',80,'1 slice',3,'breakfast'],
-  ['Olive oil',120,'1 tbsp',0,'main'], ['Beer',210,'500 ml',2,'drinks']
+  ['Coffee with milk',45,'1 mug',2,['drinks']], ['Scrambled eggs, 3',250,'3 eggs + butter',18,['breakfast']],
+  ['Porridge with milk',320,'60 g oats',12,['breakfast']], ['Banana',105,'medium',1,['snacks','breakfast']],
+  ['Chicken breast',165,'100 g cooked',31,['main']], ['White rice',205,'150 g cooked',4,['main']],
+  ['Greek yoghurt',130,'200 g, 2%',20,['snacks','breakfast']], ['Whey shake',120,'1 scoop',24,['drinks','snacks']],
+  ['Apple',80,'medium',0,['snacks']], ['Slice of bread',80,'1 slice',3,['breakfast']],
+  ['Olive oil',120,'1 tbsp',0,['main']], ['Beer',210,'500 ml',2,['drinks']]
 ];
 
 (async function boot(){
@@ -1854,7 +1926,10 @@ const SEED = [
   db.weighIns = db.weighIns || {}; db.activity = db.activity || {};
   db.customEx = db.customEx || {}; db.exFavs = db.exFavs || [];
   db.settings = Object.assign({ stepGoal:8000 }, db.settings || {});
-  if(!db.favs.length) db.favs = SEED.map(([name,kcal,note,protein,category]) => ({ id:uid(), name, kcal, protein:protein||0, note, category:category||'main', uses:0 }));
+  /* a food can be more than one thing (yoghurt is a snack AND breakfast) —
+     migrate anyone's already-saved single `category` string up to an array */
+  db.favs.forEach(f => { if(!f.categories) f.categories = f.category ? [f.category] : ['main']; });
+  if(!db.favs.length) db.favs = SEED.map(([name,kcal,note,protein,categories]) => ({ id:uid(), name, kcal, protein:protein||0, note, categories:categories||['main'], uses:0 }));
   calSel = today();
   if(!db.profile){ show('me', 'replace'); toast('Start here: your body and your goal'); }
   else show('today', 'replace');

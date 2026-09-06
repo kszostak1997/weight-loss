@@ -68,7 +68,10 @@ Clearing Chrome site data wipes it, so export before you do that.
 ## The maths
 
 Weight is simulated forward from what you log, day by day. Weigh-ins are optional —
-log one whenever you want, and it snaps that projection back to reality.
+log one whenever you want, and it snaps that projection back to reality. Once
+today's weigh-in exists, both "Log today's weight" buttons (Today and Setup) grey
+out and show the logged number instead, so there's no way to accidentally log two
+for the same day; deleting it from Setup's weigh-in list re-enables them.
 
 - **BMR** — Mifflin-St Jeor, recalculated every simulated day from the current projected weight.
 - **Maintenance (TDEE)** — BMR × a fixed sedentary multiplier (`BASE_ACTIVITY = 1.2`), plus
@@ -110,8 +113,15 @@ has a stable `id` (don't reuse an id for a different exercise — it's what indi
 days' checkmarks are keyed on), a rough `kcal` estimate at a 75&nbsp;kg reference
 weight (scaled automatically to the user's current weight), and an optional `video`
 URL — when present, a small ▶ link appears next to the exercise, pointing at a
-YouTube (or any) demonstration. It's fine to leave `video` unset item by item; add
-links whenever you have a good one.
+YouTube demonstration, without toggling the checkbox when tapped. Every current
+exercise has one filled in; it's fine to leave `video` unset on new items until
+there's a good link for them.
+
+**Favourite exercises** can be logged two ways. Most are a single fixed amount
+(an evening walk, say) — tap it and it's logged. Ones marked **"Log by count"**
+(Setup → Favourite exercises) instead store a kcal-per-unit figure and a unit
+label (e.g. `0.5` kcal per rep) — tapping one opens a small sheet to type how many
+you actually did (28 pull-ups → 14 kcal), rather than logging a fixed guess.
 
 On top of the fixed plan, **custom exercises** are free-form: "+ Add exercise" logs
 something one-off to whichever day is selected, with its own name and kcal (given
@@ -122,11 +132,14 @@ already uses.
 
 ## Food categories
 
-Favourites (Setup and the Add-meal sheet) can carry a `category` — Breakfast, Main,
-Snacks, or Drinks — and a chip row above the list filters by it, for picking a meal
-faster on a typical day. New favourites default to Main; edit an existing one to
-recategorise it. Meals logged to the day's ledger don't carry a category themselves —
-only the reusable favourites do, since that's what the chips are filtering.
+Favourites (Setup and the Add-meal sheet) can carry any combination of
+`categories` — Breakfast, Main, Snacks, Drinks — since plenty of foods are more
+than one thing (yoghurt is both a snack and a breakfast). A chip row above the
+list filters by a single category at a time, for picking something faster on a
+typical day; the favourite itself can still match several chips. Leaving every
+category unchecked when saving falls back to Main. Meals logged to the day's
+ledger don't carry categories themselves — only the reusable favourites do,
+since that's what the chips are filtering.
 
 ## Turning it into a Play Store APK
 
