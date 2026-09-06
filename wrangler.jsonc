@@ -1,0 +1,10 @@
+{
+  // This repo has no Worker script — it's a static PWA (see ledger/index.html).
+  // This tells `wrangler versions upload` / `wrangler deploy` to serve the
+  // ledger/ folder as static assets instead of looking for a src/index.ts.
+  "name": "throbbing-surf-b5f0",
+  "compatibility_date": "2026-09-06",
+  "assets": {
+    "directory": "./ledger"
+  }
+}
